@@ -37,6 +37,7 @@ var publicUrl = ensureSlash(homepagePathname, false);
 // Get environment variables to inject into our app.
 var env = getClientEnvironment(publicUrl);
 
+// BEGIN: CHUNK SORTING HOTNESS
 var deps = Object.keys(packageJson.dependencies)
 var prefixedDeps = deps.map(dep => `vendor_${dep}`)
 var entry = {
@@ -46,6 +47,7 @@ var entry = {
 deps.forEach((dep, index) => {
   entry[prefixedDeps[index]] = [dep]
 })
+// END: CHUNK SORTING HOTNESS
 
 // Assert this just to be safe.
 // Development builds of React are slow and not intended for production.
@@ -200,6 +202,7 @@ module.exports = {
         minifyCSS: true,
         minifyURLs: true
       },
+      // CHUNK SORTING HOTNESS
       chunksSortMode: 'dependency'
     }),
     // Makes some environment variables available to the JS code, for example:
@@ -207,11 +210,15 @@ module.exports = {
     // It is absolutely essential that NODE_ENV was set to production here.
     // Otherwise React will be compiled in the very slow development mode.
     new webpack.DefinePlugin(env),
+
+    // BEGIN: CHUNK SORTING HOTNESS
     new webpack.optimize.CommonsChunkPlugin({
       name: ['common'].concat(prefixedDeps),
       // name: ['common', 'vendor'],
       minChunks: 2,
     }),
+    // END: CHUNK SORTING HOTNESS
+
     // This helps ensure the builds are consistent if source hasn't changed:
     new webpack.optimize.OccurrenceOrderPlugin(),
     // Try to dedupe duplicated modules, if any:

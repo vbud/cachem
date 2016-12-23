@@ -139,6 +139,7 @@ function build(previousSizeMap) {
      process.exit(1);
     }
 
+    // BEGIN: CHUNK SORTING HOTNESS
     const sortedChunks = chunkSorter.dependency(stats.toJson().chunks)
     const files = sortedChunks.reduce((acc, chunk) => {
       return acc.concat(chunk.files)
@@ -147,6 +148,7 @@ function build(previousSizeMap) {
       js: files.filter(file => path.extname(file) === '.js'),
       css: files.filter(file => path.extname(file) === '.css'),
     }, null, 2))
+    // END: CHUNK SORTING HOTNESS
 
     console.log(chalk.green('Compiled successfully.'));
     console.log();
